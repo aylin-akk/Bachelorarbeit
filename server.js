@@ -12,21 +12,40 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     console.log(file);
     cb(null, Date.now() + path.extname(file.originalname));
-  }
+  },
 });
 
-const upload = multer({ storage: storage });
+const fileFilter = function (req, file, cb){
+  const acceptedFileExtensions = ['.jpg', '.jpeg', '.png'];
+  const fileExtension = path.extname(file.originalname);
+  
+  if(acceptedFileExtensions.includes(fileExtension)){
+    cb(null, true);
+  }else{
+    cb(new Error('Nur Bilddateien mit der Endung .jpg, .jpeg und .png werden akzeptiert.'));
+  }
+}
 
-app.get("/", (req, res) => {
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: fileFilter
+});
+
+
+
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'upload.html'));
 
 });
 
 
-app.post("/upload",upload.single("uploaded_receipt"),(req, res) => {
+app.post('/upload',upload.single('uploaded_receipt'),(req, res) => {
   res.send("Receipt uploaded");
 });
 
-app.listen(3001);
-console.log("3001 is the port");
+app.listen(4000, () => {
+  console.log('Server running on Port 4000');
+});
+
 
