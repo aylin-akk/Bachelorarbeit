@@ -1,41 +1,38 @@
 const fs = require('fs');
-const path = require("path");
+const path = require('path');
 const { createWorker, PSM } = require('tesseract.js');
+const removeIrrelevantData = require('./removeIrrelevantData.js');
+const replaceWord = require('./replaceWordByLevenshtein.js');
+const { calculate_CER, calculate_WER } = require('./calculateErrorRate.js');
+const tessConfig = require('../tessConfig.js');
 
 
 
-const recognizeText = async (req, res, next) => {
-
-  /*if (req.files.length === 0) {
-    return res.status(400).json({ extrahierterText: '', message: 'Keine Datei hochgeladen' });
-  } else {*/
-    const worker = await createWorker('deu', 2);
-
-    await worker.setParameters({
-      tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
-      preserve_interword_spaces: '1',
-      user_defined_dpi: '500'
+async function recognizeText(imageFilePath) {
+    const worker = await createWorker(tessConfig.lang, tessConfig.oem, {
+      cachePathPath: 'C:/Program Files/Tesseract-OCR/tessdata',
+      logger: m => console.log(m),
+      errorHandler: err => console.error(err)
     });
-
-    //const files = req.files;
-
-    //for (const file of files) {
-      const { data: { text } } = await worker.recognize('../output.png');
-      const targetSentence = 'Unsere Offnungszeiten';
-      const targetIndex = text.indexOf(targetSentence);
-      const extractedText = (targetIndex !== -1) ? text.substring(0, targetIndex) : text;
-
-      const dateinameOhneEndung = path.basename(req.files[0].path, path.extname(req.files[0].path));
-      fs.writeFileSync(`tessOutput/${dateinameOhneEndung}.txt`, Buffer.from(extractedText));
-      console.log(extractedText);
-      await worker.terminate();
-      next();
-    }
-
-    
-
   
-  //}
-//}
+    await worker.setParameters({
+      tessedit_pageseg_mode: tessConfig.psm,
+      tessedit_char_blacklist: tessConfig.blacklist,
+      user_defined_dpi: tessConfig.dpi
+    });
+    
+    const { data: { text } } = await worker.recognize(imageFilePath);
+    const cleanedOutput = removeIrrelevantData(text);
+    const improvedOutput = replaceWord(cleanedOutput);
+    const dateinameOhneEndung = path.basename(imageFilePath, path.extname(imageFilePath));
+    const outputFileName = `${dateinameOhneEndung}.txt`;
+    fs.writeFileSync(`./tessOutput/${outputFileName}`, Buffer.from(improvedOutput));
+    const charErrRate = calculate_CER(improvedOutput, outputFileName);
+    const wordErrRate = calculate_WER(improvedOutput, outputFileName);
+    console.log(improvedOutput + '\n' + `CER = ${charErrRate}%` + '\n' + `WER = ${wordErrRate}%`);
+    await worker.terminate();
+
+  }
+
 
 module.exports = recognizeText;
