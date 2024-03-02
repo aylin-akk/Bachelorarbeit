@@ -18,11 +18,11 @@ function removeIrrelevantData(text) {
     const start = match_1.index;
     const end = match_2.index + match_2[0].length;
     const cleanedText = cleanedUpText.substring(0, start) + cleanedUpText.substring(end);
-    //Regex mit ChatGPT generiert
+
     //Zeichen aller Art werden entfernt, die die Länge 1 haben und am Anfang oder Ende einer Zeile stehen
-    return cleanedText.replace(/(?<=\s|^).(?=\s|$)/g, '').replace(/^\s+/gm, '').replace(/\b\d{6,}\b/g, '').replace(nettoBarEU, '').replace(/^[^a-zA-Z0-9]/gim, '');
+    return cleanedText.replace(/(?<=\s|^).(?=\s|$)/g, '').replace(/^\s+/gm, '').replace(/\b\d{6,}\b/g, '').replace(nettoBarEU, '').replace(/^[^a-zA-Z0-9]/gim, '').replace(/\b[a-zA-Z]{2}\b/g, '');
   }
   
-  return cleanedUpText.replace(/(?<=\s|^).(?=\s|$)/g, '').replace(/^\s+/gm, '').replace(/\b\d{6,}\b/g, '').replace(nettoBarEU, '').replace(/^[^a-zA-Z0-9]/gim, '');
+  return cleanedUpText.replace(/(?<=\s|^).(?=\s|$)/g, '').replace(/^\s+/gm, '').replace(/\b\d{6,}\b/g, '').replace(nettoBarEU, '').replace(/^[^a-zA-Z0-9]/gim, '').replace(/\b[a-zA-Z]{2}\b/g, '');
 }
 module.exports = removeIrrelevantData;

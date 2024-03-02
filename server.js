@@ -3,18 +3,19 @@ const multer = require('multer');
 const fs = require('fs').promises;
 const path = require("path");
 const recognizeText = require('./Middleware/recognizeText.js');
-const createDictionary = require('./Middleware/createDictionary.js');
+//const createDictionary = require('./Middleware/createDictionary.js');
+const createProductDatabase = require('./createProductDatabase.js');
+const calculateAccuracyOnWordLevel = require('./Measurements/calculateOcrAccuracy.js');
+const { generateCsv } = require('./Measurements/generateCSV.js');
 
 
-
-//const calculateDist = require('./Distanz.js');
-//const removeBackground = require('./Middleware/removeBackground.js');
 
 
 //Funktion wird nur dann aufgerufen, wenn dictionary.json noch nicht existiert bzw. wenn der Groundtruth-Datensatz erweitert wird
 //createDictionary();
 
-//calculateDist();
+//Wird nur bei neuem Ground-Truth aufgerufen, um Produktdatenbank zu aktualisieren
+//createProductDatabase();
 
 const app = express();
 
@@ -53,7 +54,7 @@ const upload = multer({
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'upload.html'));
-  
+
 });
 
 
@@ -66,9 +67,11 @@ app.get('/processDataset', async (req, res) => {
       const imageFiles = await fs.readdir(directoryPath);
       for (const imageFile of imageFiles) {
         const imageFilePath = path.join(directoryPath, imageFile);
-        await recognizeText(imageFilePath);
+        const ocrText = await recognizeText(imageFilePath);
+        await calculateAccuracyOnWordLevel(ocrText, imageFilePath);
       }
     }
+    generateCsv();
     res.status(200).send('Datensatz wird verarbeitet');
   } catch (err) {
     console.log(err.message);
@@ -80,8 +83,7 @@ app.get('/processDataset', async (req, res) => {
 app.post('/upload', upload.single('uploaded_receipt'),
   async (req, res) => {
     try {
-      await recognizeText(req.file.path);
-      //const ocrAccuracy = calculateAccuracyOnDataLevel();
+      const processedText = await recognizeText(req.file.path);
       res.status(200).json({ message: 'Textextraktion erfolgreich' })
     } catch (err) {
       if (!req.file) {
@@ -98,7 +100,6 @@ app.post('/upload', upload.single('uploaded_receipt'),
 //wird auf alle Anfragen angewendet
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-
     if (err.code === 'LIMIT_FILE_SIZE') {
       res.status(400).json({ extrahierterText: '', message: 'Die Dateigröße darf 2MB nicht überschreiten.' });
       console.log(err.message);

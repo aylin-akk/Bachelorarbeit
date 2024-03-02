@@ -1,4 +1,4 @@
-const speechScorer = require('word-error-rate');
+/*const speechScorer = require('word-error-rate');
 const calcCER = require('character-error-rate');
 const fs = require('fs');
 
@@ -31,3 +31,4 @@ function normalizeText(text) {
 
 module.exports = { calculate_CER, calculate_WER };
 
+*/

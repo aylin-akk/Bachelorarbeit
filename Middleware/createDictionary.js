@@ -1,4 +1,4 @@
-const fs = require('fs');
+/*const fs = require('fs');
 const path = require("path");
 
 
@@ -47,3 +47,4 @@ async function updateCustomDictionary(filePath) {
 
 
 module.exports = createCustomDictionary;
+*/

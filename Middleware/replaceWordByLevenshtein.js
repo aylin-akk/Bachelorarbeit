@@ -8,7 +8,7 @@ const customDictionary = JSON.parse(fs.readFileSync('./Dictionary/customDictiona
 
 
 function correctWord(cleanedText) {
-  const lines = cleanedText.split(/\n/g); //Jede Zeile ein neues Array-Elemet
+  const lines = cleanedText.split(/\n/g); 
   let wordsPerLine = [];
 
   for (e of lines) {
