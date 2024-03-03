@@ -1,4 +1,4 @@
-
+  
 ALDI SOD
 Kruppstraße 51 
 47229 Duisburg-Rheinhausen 
@@ -7,12 +7,12 @@ EXPRESSI Mild 3,29
 EXPRESSI Mild 3,29 
 : Mandarin m.  2,42 
 L&M Red 28 10,00 
-L&M Red 28 10,00 
-Orangen 2Kg 2,89 
-Walnussbrötchen 
+L&M Red 28 10,008
+Orangen 2kg 2,89 
+Walnussbrötchen 0,55A
   Walnussbrötchen 0,55 
-Walnussbrätchen 07557A
+Walnussbrätchen 0,55 
 Rosenbrötchen 0,39 
 Eiweißötchen 0,59 
-Sum   37,81
-4225 8168/001/023 18.01.24 14201
+Sum   37,31
+4225 B168/001/023 18.01.24 14:01

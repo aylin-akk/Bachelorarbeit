@@ -7,6 +7,8 @@ const recognizeText = require('./Middleware/recognizeText.js');
 const createProductDatabase = require('./createProductDatabase.js');
 const calculateAccuracyOnWordLevel = require('./Measurements/calculateOcrAccuracy.js');
 const { generateCsv } = require('./Measurements/generateCSV.js');
+const preprocessImage = require('./Preprocessing/ImagePreprocessing.js');
+
 
 
 
@@ -60,14 +62,17 @@ app.get('/', (req, res) => {
 
 app.get('/processDataset', async (req, res) => {
   try {
-    const mainDirectory = 'C:/Users/Aylin/OneDrive/Desktop/Datensatz';
+    const mainDirectory = 'C:\\Users\\Aylin\\OneDrive\\Desktop\\Datensatz';
     const directories = await fs.readdir(mainDirectory);
     for (const directory of directories) {
       const directoryPath = path.join(mainDirectory, directory);
       const imageFiles = await fs.readdir(directoryPath);
       for (const imageFile of imageFiles) {
         const imageFilePath = path.join(directoryPath, imageFile);
-        const ocrText = await recognizeText(imageFilePath);
+       const preprocessedImg = await preprocessImage(imageFilePath);
+       console.log("imageFilePath: "+imageFilePath);
+       console.log("preprocessedImg: "+preprocessedImg);
+        const ocrText = await recognizeText(preprocessedImg);
         await calculateAccuracyOnWordLevel(ocrText, imageFilePath);
       }
     }

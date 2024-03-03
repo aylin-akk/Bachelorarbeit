@@ -10,12 +10,9 @@ const tessConfig = require('../tessConfig.js');
 async function recognizeText(imageFilePath) {
  
     const worker = await createWorker(tessConfig.lang, tessConfig.oem, {
-      logger: m => {
-        if(m.progress > 0.2 && m.progress < 0.21 || m.progress > 0.4 && m.progress < 0.41 || m.progress > 0.6 && m.progress < 0.61 ||m.progress > 0.8 && m.progress < 0.81||m.progress > 0.9 ){
-          console.log(m)
-        }
-      },
+      //logger: m => console.log(m),
       errorHandler: err => console.error(err)
+
     });
   
     await worker.setParameters({
@@ -28,7 +25,7 @@ async function recognizeText(imageFilePath) {
     const cleanedOutput = removeIrrelevantData(text);
  
     const splitedPath = imageFilePath.split("\\");
-    const receiptName = (splitedPath[splitedPath.length-2] + "_" + splitedPath[splitedPath.length-1]).replace("JPG", "txt");
+    const receiptName = (splitedPath[splitedPath.length-1]).replace("png", "txt");
    
     fs.writeFileSync(`./tessOutput/${receiptName}`, Buffer.from(cleanedOutput));
     await worker.terminate();

@@ -6,7 +6,7 @@ const {saveOcrAccuracy} = require('./generateCSV.js');
 async function calculateAccuracyOnWordLevel(ocrText, imageFilePath) {
   try{
     const refText = await fs.readFile(`./GroundtruthDataset/${imageFilePath.substr(imageFilePath.lastIndexOf("Kassenbon"), imageFilePath.length - 1).replace('JPG', 'txt')}`, 'utf8');
-    console.log(refText);
+    
       const ocrWords = (normalizeText(ocrText)).split(' ');
       const refWords = (normalizeText(refText)).split(' ');
   

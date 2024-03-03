@@ -1,42 +1,40 @@
-a, 
- ALDI SÜD 5a
-Kruppstraße  
-47229 Duisburg-Rheinhausen 
-
-Eigenmarke: Pfand -2,50  
-Salett! 2er Kette 0,99  
-River /CMZ 1.5L 0,596 v7
-Eigenmarke: Pfand 0,2946 
- 02722  0,0976 
-Eigenmarke: Pfarid 0206 
-   Dip Sortiment 1: 1908 
-  Koch-Hintersch. 1,59  
-  Cracker   775g 1,39  
-  Tante .Flammkt. 1,79  
-Tante .Flammkt. 1,79  
-Sofortstarno 
-    Tante .Flammkt. -1,79  
-EAN  River /CMZ 1.5L 0,59 
+ ALDI SÜD 
+Kruppstraße 51 
+47229 Dui sburg-Rheinhausen 
+Eigenmarke: Pfand -2,50 
+  Saletti 2er Kette 0,99  
+  River /CMZ 1.5L 0,596  
+Eigenmarke: Pfand 0,25  
+Flirt 02/22 1.5L 0,59  
 Eigenmarke: Pfand 0,25 
-   Creme Fraiche 200g 0,99 
-  Dattel tomaten 250g 0,99 
- Satfortstarno
+   Dip Sortiment 1,79  
+  Koch-Hintersch. 1,59  
+ DEE  Cracker   /ög 1,39  üg
+   Tante .Flammkt. 1,79  
+Tante .Flammkt. 1,79  
+EEE Sofortstarno 
+    Tante .Flammkt. -1,79 
+   River /CMZ 1.5L 0,59 
+     Eigenmarke: Pfand 0,20.8
+    Creme Fraiche 200g 0,99 
+  Datteltomaten 250g 0,99 
+PTR SatTortstorno
     Datteltomaten 250 -0,99 
-»  S06088Mirkehdrink. 500m1 0,69 
-WARE  Eigenmarke: Pfand 0,   man
-  Wok-Saucen 200  0,99 
-   Kart, vwfk 2.5kg 2,45 
+OEL   .. -Mirkehdrink. S0Cm1 0,69 
+  Eigenmarke: Pfand 0728  
 Wok-Saucen 200  0,99 
-  Sonnenmais 425m1 0,99 
-EEE  SchokoWaffelr 1,5908
-Flirt/River 500m 0,34
-    Eigenmarke: Pfand 0,286
-   Star Rice Riegel 08
-   Mozzarella 0,898
-  Kirschpaprika 1,990
-   Champ. Weiß 4009 1,69 
-    Bio-TopfkräuterMix 1,19 
- 
-         
-1483 B168/001/023 15.01.24
+  Kart, vwfk 2.5kg 2,45 
+ PEN   Wok-Saucen 200  0,99 
+EEE  Sonnenmais 425m1 0,99 
+SEN  SchokoWaffelr 1,590
+  Flirt/River 500ml 0,3485
+ BETT  Eigenmarke: Pfand 0,256
+ SEN  Star Rice Riegel 06a
+   Mozzarella Ges 
+  Kirschpaprika 19
+   Champ. Weiß 4009 169A
+    Bio-TopfkräuterMix 
+       
+  
+ 1483 B168/001/023 15,01. 24
  
