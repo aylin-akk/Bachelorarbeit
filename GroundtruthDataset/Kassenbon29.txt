@@ -8,19 +8,20 @@ Back-Camemb. m.Dip 2,99
 Red Bull regular  0,85   
 Handelsmarke: Pfan  0,25  
 Red Bull regular  0,85  
+Handelsmarke: Pfan  0,25  
 Kompos.öllichte 3,99    
 Red Bull regular  0,85          
 Handelsmarke: Pfan 0,25    
 Red Bull regular  0,85      
 Handelsmarke: Pfan  0,25  
-Vollmilch 3,5%   0,99         
+Vollmilch 3,5%   0,99  
+Vollmilch 3,5%   0,99       
 Gouda alt 2,49   
 Leerdammer  1,29   
 Leerdammer  1,29   
 Fol Epi Scheiben  2,69   
 Schinkenstücke375g 4,99   
 Schinkenstücke375g  4,99 
-Sofortstorno    
 Schinkenstücke375 -4,99
 Küchenkräuter  0,99   
 Schlagsahne 200g  0,99     
@@ -28,10 +29,10 @@ Bio—Schmand 150g   0,85
 Schlagsahne 200g   0,99     
 Creme  Fraiche 200g 0,99
 Zucker-Raffinade  1,49 
-Joghurt-Dessert  2,49   
+Joghurt & Dessert  2,49   
 Burger-Sort im Dop  2,29   
 Emmentaler ger.  1,99   
-RedBulRegular330  1,59
+RedBullRegular330  1,59
 Handelsmarke: Pfan  0,25
 
 Summe 49,30  

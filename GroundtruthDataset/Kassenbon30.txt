@@ -11,7 +11,7 @@ Schönwasserstraße 8-10
  Handelsmarke: Pfan  1,00   
  Bio-Milch 3.8% 1L  1,25     
  Bio-Milch 3.8% 1L  1,25  
- Bio-Milch 3.8% IL  1,25   
+ Bio-Milch 3.8% 1L  1,25   
  Pflanzenoel 1L  1,59 
  Fanta/Spr/MM 1.25L  0,69
  Handelsmarke: Pfan  0,25
@@ -24,7 +24,7 @@ Schönwasserstraße 8-10
  H-Sauerr/Schm 200g  0,89 
  Hefe Wuerfel 42g 0,15   
  Weisskaese i. Lake  6,99   
- Weizen-Sandwich  1.49   
+ Weizen-Sandwich  1,49   
  Geflügelfrikadelle 2,99 
  Fusilli  0,79 
  Apfelsaft 1l  0,99   

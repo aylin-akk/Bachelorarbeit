@@ -2,40 +2,40 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs').promises;
 const path = require("path");
-const recognizeText = require('./Middleware/recognizeText.js');
-//const createDictionary = require('./Middleware/createDictionary.js');
-const createProductDatabase = require('./createProductDatabase.js');
-const calculateAccuracyOnWordLevel = require('./Measurements/calculateOcrAccuracy.js');
-const { generateCsv } = require('./Measurements/generateCSV.js');
-const preprocessImage = require('./Preprocessing/ImagePreprocessing.js');
+const recognizeText = require('./recognizeText.js');
+const saveReceiptData = require('./dataManagemet/saveReceiptDataToDB.js');
+const extractReceiptData = require('./htmlGenerator.js');
+const preprocessImage = require('./preprocessing/imagePreprocessing.js');
+const autoCorrectText = require('./postprocessing/autoCorrect.js');
+const correctSpelling = require('./postprocessing/spellcheck.js');
+const { getReceiptDataFromDb, getReceiptProductsFromDb } = require('./dataManagemet/getReceiptData.js');
+const processDataset = require('./tessPipeline.js');
+const createProductDatabase = require('./dataManagemet/createProductDatabase.js');
 
-
-
-
-
-//Funktion wird nur dann aufgerufen, wenn dictionary.json noch nicht existiert bzw. wenn der Groundtruth-Datensatz erweitert wird
-//createDictionary();
-
-//Wird nur bei neuem Ground-Truth aufgerufen, um Produktdatenbank zu aktualisieren
+//Funktion wurde nur einmal aufgerufen, um die Produktdatenbank mit dem Ground-Truth-Datensatz zu erstellen
 //createProductDatabase();
+
+//Funktion wurde nur für die Auswertung des Datensatzes aufgerufen
+//processDataset();
 
 const app = express();
 
-//Speicheroption 
+//Konfiguration für den Speicherort und den Dateinamen der hochgeladenen Datei(Kassenbon)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'Images');
+    cb(null, 'images');
   },
   filename: function (req, file, cb) {
     console.log(file);
-    cb(null, file.originalname);
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
-const fileFilter = (req, file, cb) => {
-  const acceptedFileExtensions = ['.jpg', '.jpeg', '.png', '.JPG'];
-  const fileExtension = path.extname(file.originalname);
 
+//Filterfunktion der Multer-Middleware, die kontrolliert, welche Dateien beim Hochladen akzeptiert werden
+const fileFilter = (req, file, cb) => {
+  const acceptedFileExtensions = ['.jpg', '.jpeg', '.png'];
+  const fileExtension = path.extname(file.originalname).toLocaleLowerCase();
   if (acceptedFileExtensions.includes(fileExtension)) {
     cb(null, true);
   } else {
@@ -43,66 +43,71 @@ const fileFilter = (req, file, cb) => {
   }
 }
 
-//Konfigurationsoptionen für Multer Middleware
+//Konfigurationsobjekt der Multer-Middleware, um das Hochladen der Dateien zu verwalten
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 //2MG in Bytes
+    fileSize: 5 * 1024 * 1024 //5MB in Bytes
   },
   fileFilter: fileFilter
 });
 
 
-
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'upload.html'));
-
+  res.sendFile(path.join(__dirname, './public/upload.html'));
 });
 
-
-app.get('/processDataset', async (req, res) => {
+//Route zum Speichern von Kassenbondaten in die Datenbank
+app.post('/saveReceiptToDatabase', upload.none(), async (req, res) => {
   try {
-    const mainDirectory = 'C:\\Users\\Aylin\\OneDrive\\Desktop\\Datensatz';
-    const directories = await fs.readdir(mainDirectory);
-    for (const directory of directories) {
-      const directoryPath = path.join(mainDirectory, directory);
-      const imageFiles = await fs.readdir(directoryPath);
-      for (const imageFile of imageFiles) {
-        const imageFilePath = path.join(directoryPath, imageFile);
-       const preprocessedImg = await preprocessImage(imageFilePath);
-       console.log("imageFilePath: "+imageFilePath);
-       console.log("preprocessedImg: "+preprocessedImg);
-        const ocrText = await recognizeText(preprocessedImg);
-        await calculateAccuracyOnWordLevel(ocrText, imageFilePath);
-      }
-    }
-    generateCsv();
-    res.status(200).send('Datensatz wird verarbeitet');
-  } catch (err) {
-    console.log(err.message);
-    res.status(400).send('Unbekannter Fehler beim Verarbeiten des Datensatzes');
+    await saveReceiptData(req.body);
+    res.status(200);
+  } catch (error) {
+    console.log(error);
   }
 });
 
 
+//Route zum Hochladen von Kassenbons und zum Ausführen der Tesseract-Pipeline
 app.post('/upload', upload.single('uploaded_receipt'),
   async (req, res) => {
     try {
-      const processedText = await recognizeText(req.file.path);
-      res.status(200).json({ message: 'Textextraktion erfolgreich' })
+      const preprocessedImg = await preprocessImage(req.file.path);
+      const cleanedOcrText = await recognizeText(preprocessedImg);
+      const autoCorrectedOcrText = await autoCorrectText(cleanedOcrText);
+      const finalText = await correctSpelling(autoCorrectedOcrText);
+      const extractedData = await extractReceiptData(finalText);
+      res.status(200).json({ message: 'Textextraktion erfolgreich', resultProducts: extractedData.products, resultInfos: extractedData.infos });
     } catch (err) {
       if (!req.file) {
-        res.status(400).json({ extrahierterText: '', message: 'Keine Datei hochgeladen' });
+        res.status(400).json({ message: 'Keine Datei hochgeladen' });
       }
       console.log(err.message);
     }
   }
 );
 
+//Route zum Ausgeben von Kassenbondaten in Richtung Frontend
+app.post('/getAllReceipts', upload.none(), async (req, res) => {
+  try {
+    let result = await getReceiptDataFromDb();
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
+app.post('/getAllDataForAnalysis', upload.none(), async (req, res) => {
+  try {
+    let resultReceipts = await getReceiptDataFromDb();
+    let resultProducts = await getReceiptProductsFromDb();
+    res.json({resultReceipts, resultProducts});
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-//Middleware, um Fehler beim Hochladen zu behandeln
-//wird auf alle Anfragen angewendet
+//Middleware, um Fehler beim Hochladen zu behandeln; wird auf alle Anfragen angewendet
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -121,10 +126,11 @@ app.use((err, req, res, next) => {
   }
 });
 
+app.use(express.static('public'));
+
 
 app.listen(4000, () => {
   console.log('Server running on Port 4000');
 });
-
 
 

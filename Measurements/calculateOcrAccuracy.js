@@ -1,40 +1,35 @@
-
 const fs = require('fs').promises;
-const {saveOcrAccuracy} = require('./generateCSV.js');
+const { saveOcrAccuracy } = require('./generateCSV.js');
 
 
 async function calculateAccuracyOnWordLevel(ocrText, imageFilePath) {
-  try{
-    const refText = await fs.readFile(`./GroundtruthDataset/${imageFilePath.substr(imageFilePath.lastIndexOf("Kassenbon"), imageFilePath.length - 1).replace('JPG', 'txt')}`, 'utf8');
-    
-      const ocrWords = (normalizeText(ocrText)).split(' ');
-      const refWords = (normalizeText(refText)).split(' ');
+  try {
+    const refText = await fs.readFile(`./groundtruthDataset/${imageFilePath.substr(imageFilePath.lastIndexOf("Kassenbon"), imageFilePath.length - 1).replace('JPG', 'txt')}`, 'utf8');
+
+    const ocrWords = (normalizeText(ocrText)).split(' ');
+    const refWords = (normalizeText(refText)).split(' ');
   
-      
-      const {deletions, substitutions } = countErrors(ocrWords, refWords);
+    //Gesamtanzahl der Fehler im OCR-Text wird bestimmt
+    const { deletions, substitutions } = countErrors(ocrWords, refWords);
+    const errors = deletions + substitutions;
 
-      const errors = deletions + substitutions;
-      //const ocrAccuracy = (((totalWords - errors )/ totalWords) * 100).toFixed(2);
-      
-      saveOcrAccuracy(imageFilePath, refWords, errors);
-      //console.log(`Der Genauigkeitsprozentsatz beträgt ${ocrAccuracy}`);
-    } catch (err) {
-      console.error('Ein unbekannter Fehler ist aufgetreten:', err);
-    }
+    saveOcrAccuracy(imageFilePath, refWords, errors);
+  } catch (err) {
+    console.error('Ein unbekannter Fehler ist aufgetreten:', err);
   }
+}
 
-  function normalizeText(text) {
-  //Alle Leerzeichen am Anfang und Ende + Mehrfachleerzeichen innerhalb des Strings löschen
-  text = text.trim().replace(/\s{1,}/g, ' ');
-  //Alle Zeilenumbrüche am Anfang und Ende + Mehrfachzeilenumbrüche innerhalb des Strings löschen
+//Alle Leerzeichen am Anfang und Ende + Mehrfachleerzeichen innerhalb des Strings werden gelöscht
+//Alle Zeilenumbrüche am Anfang und Ende + Mehrfachzeilenumbrüche innerhalb des Strings werden löschen
+function normalizeText(text) {
+  text = text.trim().replace(/\s{1,}/g, '');
   text = text.replace(/^\n{1,}|\n{1,}$/g, '').replace(/\n{1,}/g, '\n');
   return text;
 }
 
-
+//Algorithmus zur Fehlermessung mit ChatGPT generiert
+//Minimale Bearbeitungsdistanz (Levenshtein-Distanz) zwischen dem aktuellen OCR-Wort und dem aktuellen Wort aus dem Groundtruth wird bestimmt
 function countErrors(ocrWords, refWords) {
-  // Algorithmus mit ChatGPT generiert und angepasst
-  //Löschungen und Substitutionen werden als Fehler gezählt
   const d = [];
   for (let i = 0; i <= refWords.length; i++) {
     d[i] = [i];
@@ -52,7 +47,8 @@ function countErrors(ocrWords, refWords) {
       );
     }
   }
-
+  //Löschungen und Substitutionen im OCR-Text werden als Fehler gezählt
+  //Anzahl der Löschungen, Einfügungen und Substitutionen werden jeweils bestimmt
   let i = refWords.length;
   let j = ocrWords.length;
   let insertions = 0;
@@ -60,33 +56,24 @@ function countErrors(ocrWords, refWords) {
   let substitutions = 0;
 
   while (i > 0 && j > 0) {
-      if (d[i][j] == d[i - 1][j - 1] + (refWords[i - 1] !== ocrWords[j - 1] ? 1 : 0)) {
-          if (refWords[i - 1] !== ocrWords[j - 1]) {
-              substitutions++;
-          }
-          i--;
-          j--;
-      } else if (d[i][j] == d[i - 1][j] + 1) {
-          deletions++;
-          i--;
-      } else {
-          insertions++;
-          j--;
+    if (d[i][j] == d[i - 1][j - 1] + (refWords[i - 1] !== ocrWords[j - 1] ? 1 : 0)) {
+      if (refWords[i - 1] !== ocrWords[j - 1]) {
+        substitutions++;
       }
+      i--;
+      j--;
+    } else if (d[i][j] == d[i - 1][j] + 1) {
+      deletions++;
+      i--;
+    } else {
+      insertions++;
+      j--;
+    }
   }
-
-  // Falls am Anfang oder Ende noch Unterschiede bestehen
-
   deletions += i;
-
-  return {deletions, substitutions };
+  //Da nur Löschungen und Substitutionen im OCR-Text als Fehler gezählt werden, werden nur ihre Anzahl zurückgegeben
+  return { deletions, substitutions };
 
 }
-
-  
-
-
-
-
 
 module.exports = calculateAccuracyOnWordLevel;

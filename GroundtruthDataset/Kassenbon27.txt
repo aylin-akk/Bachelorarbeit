@@ -5,12 +5,13 @@ Kochstraße 46
 Rosenbrötchen  0,39   
 Rosenbrötchen  0,39   
 Weizenbrötchen  0,19 
-Weizenbrötchen  0, 19
+Weizenbrötchen  0,19
 Weizenbrötchen  0,19 
 Weltmeister-Chia-B  0,45     
 Laugenzopf m. Käse   0,59        
 Laugenzopf m. Käse   0,59
 POM-BÄR 75g  0,88
+POM-BÄR 75g  0,88   
 POM-BÄR 75g  0,88   
 Kern. Roggenvollk.  0,99   
 Ferrero Milchschn.  2,59  

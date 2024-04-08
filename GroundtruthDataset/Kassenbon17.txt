@@ -11,8 +11,8 @@ Kochstraße 46
  Handelsmarke: Pfan  0,25   
  Schlagsahne 200g  0,99  
  Sahnesteif   0,39  
- Zucker-Raffinade  1,49 
- Zucchini lose  0.84 
+ Zucker - Raffinade  1,49 
+ Zucchini lose  0,84 
  H-Sauerr/Schm 200g 0,89   
  Pfirsche 850ml  2,19  
  Vollkorn-Sandwich  1,49   
@@ -40,4 +40,4 @@ Kochstraße 46
 
  Summe 36,83
 
- 30.12.23 12:37
+ 30.12.23 12:38

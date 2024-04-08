@@ -17,7 +17,6 @@ Kruppstraße 51
  Pizza Margherita  0,95   
  Vanillestange  0,85 
  Vanillestange  0,85 
- Sofortstorno  
  Vanillestange  -0,85 
  
  Summe 14,10    

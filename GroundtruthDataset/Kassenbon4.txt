@@ -8,12 +8,12 @@
  Handelsmarke: Pfan  0,25
  Coca-Cola 1.25L  0,75   
  Handelsmarke: Pfan  0,25   
- Coca-Cola 1.25L 
+ Coca-Cola 1.25L 0,75 
  Handelsmarke: Pfan  0,25  
  Grünkohlpfanne 2,79      
  Grünkohlpfanne 2,79  
  Echter Rum 0,7l 6,99    
- H-Milch 3,5% 1l  0,99      
+ H-Milch 3.5% 1L  0,99      
  Pflanzen Marg 500g  1,49   
  Schinkenfleischw.  3,59  
  Choklets 400g 2,19

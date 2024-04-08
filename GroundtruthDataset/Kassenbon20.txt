@@ -9,7 +9,7 @@ Kochstraße 46
  Barista Haferdrink 1,35       
  Bio-Schmand 150g  0,85         
  Bio-Joghurt  1,15      
- Bio.PNL FriMil.3,8  1,49       
+ Bio PNL FriMil.3,8  1,49       
  Barista Haferdrink  1,35        
  Barista Haferdrink  1,35       
  Creme Fraiche 200g  0,69     
@@ -50,9 +50,11 @@ Kochstraße 46
  Erdnüsse 200g   1,09    
  Bio. Tom., gehackt  0,75
  GT Sandwich 750g 2,29
- Champignons ganz 1,49  
+ Champignons ganz 1,49 
+ Studentenfutter 20  1,69   
  Kiwi gold Stück 0,75 
- IGLO Rahmspinat  1,49    
+ Kiwi gold Stück 0,75 
+IGLO Rahmspinat  1,49    
  Rosenbrötchen  1,59     
  Bauernkruste  1,29   
  Bio-Honig Spender  2,55 

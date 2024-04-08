@@ -1,37 +1,35 @@
-const { NONAME } = require('dns');
 const Jimp = require('jimp');
-const path = require("path");
-
-
+cv = require('./opencv.js');
 
 
 async function preprocessImage(imageFilePath) {
-  //Eingabebild wird mit Jimp gelesen, da Opencv.js Bildformate wie png oder jpeg nicht direkt unterstützt 
+  //Eingabebild wird mit der Jimp-Bibliothek gelesen, da Opencv.js Bildformate wie png oder jpeg nicht direkt unterstützt 
   const jimpSrc = await Jimp.read(imageFilePath);
-
+  //Bild- Bitmapdaten(Pixeldaten) werden in eine OpenCV-Bildmatrix konvertiert, um damit verschiedene Bildverarbeitungsfunktionen 
+  //von OpenCV.js ausführen zu können
   let src = cv.matFromImageData(jimpSrc.bitmap);
-  //Neues Matrix-Objekt wird erstellt, wo das finale verarbeitete Bild gespeichert werden soll
-  //let dst = new cv.Mat();
 
-  //Neues Matrix-Objekt wird erstellt, wo das Graustufenbild gespeichert werden soll
+  //Neue Matrix-Objekte werden erstellt, um die verarbeiteten Bilder zu speichern
   let dst = new cv.Mat();
+  let rgb = new cv.Mat();
+  let dilate = new cv.Mat();
+  let erode = new cv.Mat();
 
   try {
     const splitedPath = imageFilePath.split("\\");
-    const receiptName = (splitedPath[splitedPath.length - 2] + "_" + splitedPath[splitedPath.length - 1]).replace(".JPG", '');
+    const receiptName = (splitedPath[splitedPath.length - 1]).replace(".JPG", '');
+
+    //Verschiedene OpenCV-Bilverarbeitungsfunktionen werden ausgeführt
+    let M = cv.Mat.ones(2, 2, cv.CV_8U);
+    let anchor = new cv.Point(-1, -1);
+    cv.cvtColor(src, rgb, cv.COLOR_RGBA2RGB, 0);
+    cv.dilate(rgb, dilate, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+    cv.erode(dilate, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+    cv.medianBlur(erode, dst, 3);
 
 
-
-    //Farbiges Eingabebild wird in ein Graustufenbild konvertiert
-    cv.cvtColor(src, dst, cv.COLOR_RGBA2GRAY, 0);
-
-    //Zielgröße für die Skalierung wird festgelegt
-    //let dsize = new cv.Size(2200, 2200);
-
-
-    //Graustufenbild wird auf die Größe 2200x2200px skaliert
-    //cv.resize(gray, dst, dsize, 0, 0, cv.INTER_AREA);
-
+    //OpenCV-Bildmatrix wird wieder zurückkonvertiert in ein Jimp-Bild, indem die Farbinformationen iterativ für jedes Pixel aus der
+    //Bildmatrix extrahiert werden
     const width = dst.cols;
     const height = dst.rows;
     const channels = dst.channels();
@@ -40,55 +38,52 @@ async function preprocessImage(imageFilePath) {
     const imageData = [];
     for (let i = 0; i < srcData.length; i += channels) {
       imageData.push(
-        srcData[i],
-        srcData[i + 1],
-        srcData[i + 2],
-        channels === 4 ? srcData[i + 3] : 255
-
+        srcData[i], //Rotwert
+        srcData[i + 1], //Grünwert
+        srcData[i + 2] //Blauwert
+        //channels === 4 ? srcData[i + 3] : 255 //optionaler Alphawert
       );
     }
 
+    //Verarbeitetes Bild wird mit der Jimp-Bibliothek gespeichert
     new Jimp({ data: Buffer.from(imageData), width, height }, (err, image) => {
-      if (err) console.log("##1##" + err.message);
-      image.write(`.././PreprocessedImages/${receiptName}.png`, (err) => {
+      if (err) console.log(err.message);
+      image.write(`./../preprocessedImages/${receiptName}.png`, (err) => {
         console.log('Bild gespeichert.');
       });
     });
 
-    //Ressourchen freigeben, nachdem das Bild verarbeitet wurde
-    src.delete();  dst.delete();
+    //Ressourcen freigeben, nachdem das Bild verarbeitet wurde
+    src.delete(); dilate.delete(); erode.delete(); dst.delete();
 
-
-    return `C:\\Users\\Aylin\\OneDrive\\Desktop\\PreprocessedImages\\${receiptName}.png`;
+    return `./../preprocessedImages/${receiptName}.png`;
 
   } catch (err) {
-    src.delete(); dst.delete(); 
-    console.log("##2##" + err.message);
+    //Ressourcen auch bei Fehlern freigeben
+    src.delete(); dilate.delete(); erode.delete(); dst.delete();
+
+    console.log(err.message);
   }
 }
 
-
-module.exports = preprocessImage;
-
-
+//Warten, bis die OpenCV-Bibliothek geladen und initialisiert ist,um OpenCV Funktionen benutzen zu können 
 Module = {
   onRuntimeInitialized: function () {
     preprocessImage
   }
 }
 
-cv = require('.././opencv.js');
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = preprocessImage;
+
+
+
+
+
+
+
+
+
+
+
+

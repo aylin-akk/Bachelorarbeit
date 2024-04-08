@@ -18,11 +18,10 @@ Eigenmarke: Pfand  -2,00
  Hundefutt Sel 150g  0,50
  Salatherzen 2er 0,79
  Rispentomaten lose  0,97
-
- Obstknotenbeutel   0,01   
+Obstknotenbeutel   0,01   
  Kaiserbrötchen  0,79
  Fix f. Salat-Sauce  0,49   
  
- Summe —2,40  
+ Summe -2,40  
  
  15.01.24 18:23
