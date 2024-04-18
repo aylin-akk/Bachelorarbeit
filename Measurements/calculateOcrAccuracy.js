@@ -20,10 +20,10 @@ async function calculateAccuracyOnWordLevel(ocrText, imageFilePath) {
 }
 
 //Alle Leerzeichen am Anfang und Ende + Mehrfachleerzeichen innerhalb des Strings werden gelöscht
-//Alle Zeilenumbrüche am Anfang und Ende + Mehrfachzeilenumbrüche innerhalb des Strings werden löschen
+//Alle Zeilenumbrüche am Anfang und Ende + Mehrfachzeilenumbrüche innerhalb des Strings werden gelöscht
 function normalizeText(text) {
-  text = text.trim().replace(/\s{1,}/g, '');
-  text = text.replace(/^\n{1,}|\n{1,}$/g, '').replace(/\n{1,}/g, '\n');
+  text = text.trim().replace(/\s{1,}/g, ' ');
+  text = text.replace(/^\n{1,}|\n{1,}$/g, ' ').replace(/\n{1,}/g, '\n');
   return text;
 }
 

@@ -4,13 +4,14 @@ const fs = require('fs').promises;
 const path = require("path");
 const recognizeText = require('./recognizeText.js');
 const saveReceiptData = require('./dataManagemet/saveReceiptDataToDB.js');
-const extractReceiptData = require('./htmlGenerator.js');
+const extractReceiptData = require('./dataExtraktion.js');
 const preprocessImage = require('./preprocessing/imagePreprocessing.js');
 const autoCorrectText = require('./postprocessing/autoCorrect.js');
 const correctSpelling = require('./postprocessing/spellcheck.js');
-const { getReceiptDataFromDb, getReceiptProductsFromDb } = require('./dataManagemet/getReceiptData.js');
-const processDataset = require('./tessPipeline.js');
-const createProductDatabase = require('./dataManagemet/createProductDatabase.js');
+const { getReceiptDataFromDb, getReceiptProductsFromDb, getJoinedDataFromDb } = require('./dataManagemet/getReceiptData.js');
+const deleteReceiptFromDatabase = require('./dataManagemet/deleteReceipt.js');
+const processDataset = require('./processDataset.js');
+//const createProductDatabase = require('./dataManagemet/createProductDatabase.js');
 
 //Funktion wurde nur einmal aufgerufen, um die Produktdatenbank mit dem Ground-Truth-Datensatz zu erstellen
 //createProductDatabase();
@@ -52,7 +53,7 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-
+//Startseite
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './public/upload.html'));
 });
@@ -61,11 +62,22 @@ app.get('/', (req, res) => {
 app.post('/saveReceiptToDatabase', upload.none(), async (req, res) => {
   try {
     await saveReceiptData(req.body);
-    res.status(200);
+    res.status(200).json({ result: "saved" });
   } catch (error) {
     console.log(error);
   }
 });
+
+//Route zum Löschen von Kassenbons aus der Datenbank
+app.post('/deleteReceiptFromDatabase', upload.none(), async (req, res) => {
+  try {
+    await deleteReceiptFromDatabase(req.body.id);
+    res.status(200).json({ result: "deleted" });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 
 
 //Route zum Hochladen von Kassenbons und zum Ausführen der Tesseract-Pipeline
@@ -87,21 +99,29 @@ app.post('/upload', upload.single('uploaded_receipt'),
   }
 );
 
-//Route zum Ausgeben von Kassenbondaten in Richtung Frontend
+//Route zum Ausgeben von Kassenbondaten im Frontend
 app.post('/getAllReceipts', upload.none(), async (req, res) => {
   try {
     let result = await getReceiptDataFromDb();
+
+    for (receipt of result) {
+      receipt.sum = parseFloat(receipt.sum).toFixed(2);
+    }
+
     res.json(result);
   } catch (error) {
     console.log(error);
   }
 });
 
+//Route zum Holen der Kassenbondaten aus der Datenbank für die Analysen
 app.post('/getAllDataForAnalysis', upload.none(), async (req, res) => {
   try {
     let resultReceipts = await getReceiptDataFromDb();
     let resultProducts = await getReceiptProductsFromDb();
-    res.json({resultReceipts, resultProducts});
+    let joinedTableData = await getJoinedDataFromDb();
+
+    res.json({ resultReceipts, resultProducts, joinedTableData });
   } catch (error) {
     console.log(error);
   }

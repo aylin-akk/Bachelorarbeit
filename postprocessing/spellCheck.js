@@ -12,7 +12,7 @@ async function correctSpelling(ocrText) {
     //falsch korrigiert werden
     const productNames = await productsDb.all('SELECT name FROM products ORDER BY frequency DESC');
     
-    const productPattern = /([A-ZÖÜÄa-zäüöß].+)\s+(-?\d{1,3},\d{2})/gm;
+    const productPattern = /([A-ZÖÜÄa-zäüöß].+)\s+(-?\d{1,3}[,.]\d{2})/gm;
     
     //Iteriert über die Produkte aus der Produktdatenbank, die in der Variable "productNames" gespeichert sind und 
     //erstellt daraus ein Objekt, um es als Wörterbuch für Rechtschreibkorrekturen benutzen zu können
@@ -23,7 +23,7 @@ async function correctSpelling(ocrText) {
     let match;
     let result = ocrText;
     //Iteriert über den OCR-Text und ruft für jeden Produktnamen, welcher nicht im Produktwörterbuch ist die Funktion
-    //"replaceWordByLevenshtein" auf, um mögliche Korrekturen für Produktnamen zu erhalten und um die falsch extrahierten
+    //"correctProductNameByLevenshtein" auf, um mögliche Korrekturen für Produktnamen zu erhalten und um die falsch extrahierten
     //Produktnamen im OCR-Text mit den korrigierten Produktnamen zu ersetzen
     while ((match = productPattern.exec(ocrText)) != null) {
       if (!(match[1] in productsDictionary)) {
@@ -57,7 +57,8 @@ function correctProductNameByLevenshtein(originProductName) {
   if (minDistance <= threshold) {
     return closestProductName;
   } else {
-    return originProductName;
+    //Hier wird ein * dem Produktnamen angehängt, um im Frontend den User darauf aufmerksam zu, dass das Wort nicht bekannt ist (nicht im Wörterbuch)
+    return originProductName + "*";
   }
 }
 

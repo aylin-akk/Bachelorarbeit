@@ -61,7 +61,7 @@ function generateReceiptList(receiptsList) {
             ${receipt.sum}
           </td>
           <td>
-          <button onclick="" type="button" class="btn btn-danger btn-sm">
+          <button onclick="deleteReceipt(${receipt.receiptID});" type="button" class="btn btn-danger btn-sm">
             ${deleteButtonIcon}
           </button>
           </td>
@@ -77,6 +77,7 @@ function generateReceiptList(receiptsList) {
 
 let globalReceiptsDB;
 let globalReiceiptProductsDB;
+let globalJoinedDataDB;
 
 //Holt Daten für Analysen aus der Datenbank
 async function getAllDataForAnalysis() {
@@ -91,8 +92,12 @@ async function getAllDataForAnalysis() {
     const data = await response.json();
     globalReiceiptProductsDB = data.resultProducts;
     globalReceiptsDB = data.resultReceipts;
+    globalJoinedDataDB = data.joinedTableData;
    
-    prepareDataforBarchart();
+    prepareDataForBarchart();
+    prepareDataForPiechart();
+    prepareDataForLineChart();
+
     
   } catch (error) {
     console.error('Fehler:', error.message);
