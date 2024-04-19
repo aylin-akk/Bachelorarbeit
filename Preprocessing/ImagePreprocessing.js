@@ -9,6 +9,7 @@ async function preprocessImage(imageFilePath) {
   //von OpenCV.js ausführen zu können
   let src = cv.matFromImageData(jimpSrc.bitmap);
 
+
   //Neue Matrix-Objekte werden erstellt, um die verarbeiteten Bilder zu speichern
   let dst = new cv.Mat();
   let gray = new cv.Mat();
@@ -17,15 +18,19 @@ async function preprocessImage(imageFilePath) {
 
   try {
     const splitedPath = imageFilePath.split("\\");
+  
+
     const receiptName = (splitedPath[splitedPath.length - 1]).replace(".JPG", '');
 
+
     //Verschiedene OpenCV-Bilverarbeitungsfunktionen werden ausgeführt
-    let M = cv.Mat.ones(2, 2, cv.CV_8U);
+    let M = cv.Mat.ones(4, 4, cv.CV_8U);
     let anchor = new cv.Point(-1, -1);
     cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
-    cv.dilate(gray, dilate, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
-    cv.erode(dilate, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
-    cv.medianBlur(erode, dst, 3);
+    cv.erode(gray, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+    cv.dilate(erode, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
+   
+    //cv.medianBlur(erode, dst, 3);
 
 
 
@@ -71,10 +76,11 @@ async function preprocessImage(imageFilePath) {
 
 //Warten, bis die OpenCV-Bibliothek geladen und initialisiert ist,um OpenCV Funktionen benutzen zu können 
 Module = {
-  onRuntimeInitialized: function () {
+  onRuntimeInitialized: async function () {
     preprocessImage
   }
 }
+
 
 
 module.exports = preprocessImage;

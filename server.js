@@ -17,7 +17,9 @@ const processDataset = require('./processDataset.js');
 //createProductDatabase();
 
 //Funktion wurde nur für die Auswertung des Datensatzes aufgerufen
-//processDataset();
+setTimeout(() => {
+  processDataset();
+}, "5000");
 
 const app = express();
 

@@ -32,6 +32,7 @@ async function extractReceiptData(ocrText) {
 
   //überprüfen, ob die Ortsangaben im OCR-Text gefunden werden konnten, wenn nicht wird der 
   //Nutzer aufgefordert, die Informationen für die Ortsangabe manuell nachzutragen
+  console.log(locationMatch,streetMatch);
   const aldiSuedLocation = (locationMatch && streetMatch) ? `
   <input name="location" class="location text-center border border-0" type="text" value="${streetMatch[0]}, ${locationMatch[0]}" readonly
   background-color: white;">` :
@@ -41,8 +42,7 @@ async function extractReceiptData(ocrText) {
   <input name="location2" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. 40210 Düsseldorf" style="background-color: #FFD0C5">` :
       (locationMatch) ? `
     <input name="location" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. Universitätsstraße 1" style="background-color: #FFD0C5">,
-    <input name="location2" type="text" class="location text-center border border-0" value="${locationMatch[0]}" readonly background-color: white">` :
-        !(locationMatch && streetMatch)`
+    <input name="location2" type="text" class="location text-center border border-0" value="${locationMatch[0]}" readonly background-color: white">` :`
   <input name="location" type="text" class="location border border-2 border-danger text-center" placeholder="z.B. Universitätsstraße 1"
   style="background-color: #FFD0C5">, 
   <input name="location2" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. 40210 Düsseldorf" style="background-color: #FFD0C5">`;
@@ -173,12 +173,12 @@ async function extractReceiptData(ocrText) {
       <tr id="row${i}">
       <th scope="row" class="rowNumber">${i}</th>
       <td>
-        <input name="product${i}" id="product${i}" type="text" class="fs-6 ${( match[1].includes("*") ? "border border-2 border-danger" : "border border-0" )} text" value="${match[1].trim().replace(/\*/g,"")}" readonly
+        <input name="product${i}" id="product${i}" type="text" class="form-control px-1 fs-6 ${( match[1].includes("*") ? "border border-2 border-danger" : "border border-0" )} text" value="${match[1].trim().replace(/\*/g,"")}" readonly
           style="background-color: white">
       </td>
       <td>
-        <input name="price${i}" id="price${i}" type="number" class="fs-6 border border-0 text pricesForSum" value="${match[2].replace(',', '.')}" readonly
-          style="background-color: white">
+        <input name="price${i}" id="price${i}" type="number" class="form-control px-1 fs-6 border border-0 text pricesForSum" value="${match[2].replace(',', '.')}" readonly
+          style="background-color: white; min-width: 70px;">
       </td>
       <td>
         <button onclick="saveChanges('product${i}'); saveChanges('price${i}'); updateReceiptSum('pricesForSum');" type="button"
@@ -246,7 +246,7 @@ async function extractReceiptData(ocrText) {
 <tr class="table-dark">
 <td><h5>Summe</h5></td>
 <td></td>
-<td> <input class="border border-0 bg-dark text-light" name="receiptSum" id="receiptSum" value="${(receiptSum == undefined ? '' : receiptSum)}" readonly></td>
+<td> <input class="form-control border border-0 bg-dark text-light" name="receiptSum" id="receiptSum" value="${(receiptSum == undefined ? '' : receiptSum)}" readonly></td>
 <td><button type="submit" class="btn btn-primary btn-sm">Kassenbon speichern
 </button></td>
 </tr>

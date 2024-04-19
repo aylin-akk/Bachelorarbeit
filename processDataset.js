@@ -4,6 +4,7 @@ const recognizeText = require('./recognizeText.js');
 const params = require('./tessConfig.js');
 const calculateAccuracyOnWordLevel = require('./measurements/calculateOcrAccuracy.js');
 const { generateCsv, saveOcrAverage, generateCsvWriter } = require('./measurements/generateCSV.js');
+const preprocessImage = require('./preprocessing/imagePreprocessing.js');
 
 
 //Funktion mit ChatGPT generiert und angepasst
@@ -30,27 +31,27 @@ async function generateParamCombinations(parameters, index, current) {
 //const paramCombinations = [];
 async function processDataset() {
   try {
-    generateParamCombinations(Object.keys(params), 0, {});
+    //generateParamCombinations(Object.keys(params), 0, {});
     const mainDirectory = 'C:\\Users\\Aylin\\OneDrive\\Desktop\\Datensatz';
     const directories = await fs.readdir(mainDirectory);
-    for (const combination of paramCombinations) {
+    //for (const combination of paramCombinations) {
       generateCsvWriter();
       for (const directory of directories) {
         const directoryPath = path.join(mainDirectory, directory);
         const imageFiles = await fs.readdir(directoryPath);
         for (const imageFile of imageFiles) {
           const imageFilePath = path.join(directoryPath, imageFile);
-          //const preprocessedImg = await preprocessImage(imageFilePath);
+          const preprocessedImg = await preprocessImage(imageFilePath);
           //const ocrText = await recognizeText(imageFilePath, combination);
-          const ocrText = await recognizeText(imageFilePath);
+          const ocrText = await recognizeText(preprocessedImg);
           //const finalText = await postprocessText(ocrText);
           await calculateAccuracyOnWordLevel(ocrText, imageFilePath);
         }
         saveOcrAverage();
       }
-      generateCsv(combination);
+      //generateCsv(combination);
       generateCsv();
-    }
+    //}
   } catch (err) {
     console.log(err.message);
   }

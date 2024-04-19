@@ -9,7 +9,7 @@ let csvWriter;
 //Tabellenspaltennamen für die Messungen werden hier festgelegt
 function generateCsvWriter() {
   csvWriter = createCsvWriter({
-    path: `C:/Users/Aylin/OneDrive/Desktop/Messungen/Messung${i++}.csv`,
+    path: `C:/Users/Aylin/OneDrive/Desktop/Messungen/Messung.csv`,
     header: [
       { id: 'id', title: 'receipt id' },
       { id: 'totalWords', title: 'total words' },
