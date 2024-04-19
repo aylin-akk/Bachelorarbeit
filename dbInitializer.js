@@ -12,8 +12,8 @@ async function openDatabase(dbPath) {
 }
 //Datenbankverbindungen werden beim Laden des Moduls initialisiert
 async function initializeDatabases() {
-  const productsDb = await openDatabase('./products.db');
-  const receiptDataDb = await openDatabase('./receiptData.db');
+  const productsDb = await openDatabase('./databases/products.db');
+  const receiptDataDb = await openDatabase('./databases/receiptData.db');
   return { productsDb, receiptDataDb };
 
 }

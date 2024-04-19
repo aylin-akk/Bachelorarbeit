@@ -8,7 +8,7 @@ const params = {
   dpi: '70',
   thresholding_method: '2',
   thresholding_kfactor: '0.4',
-  thresholding_window_size: '0.5',
+  thresholding_window_size: '0.3',
   load_system_dawg: '0',
   load_freq_dawg: '0',
   textord_heavy_nr: '0',
@@ -21,7 +21,7 @@ const params = {
   textord_noise_rejwords: '0',
   wordrec_max_join_chunks: '2',
   textord_interpolating_skew: '0',
-  textord_min_xheight: '15',
+  textord_min_xheight: '10',
   enable_noise_removal: '0'
 }
 

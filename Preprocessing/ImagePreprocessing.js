@@ -18,10 +18,7 @@ async function preprocessImage(imageFilePath) {
 
   try {
     const splitedPath = imageFilePath.split("\\");
-  
-
     const receiptName = (splitedPath[splitedPath.length - 1]).replace(".JPG", '');
-
 
     //Verschiedene OpenCV-Bilverarbeitungsfunktionen werden ausgeführt
     let M = cv.Mat.ones(4, 4, cv.CV_8U);
@@ -29,10 +26,6 @@ async function preprocessImage(imageFilePath) {
     cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
     cv.erode(gray, erode, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
     cv.dilate(erode, dst, M, anchor, 1, cv.BORDER_CONSTANT, cv.morphologyDefaultBorderValue());
-   
-    //cv.medianBlur(erode, dst, 3);
-
-
 
     //OpenCV-Bildmatrix wird wieder zurückkonvertiert in ein Jimp-Bild, indem die Farbinformationen iterativ für jedes Pixel aus der
     //Bildmatrix extrahiert werden
@@ -44,10 +37,9 @@ async function preprocessImage(imageFilePath) {
     const imageData = [];
     for (let i = 0; i < srcData.length; i += channels) {
       imageData.push(
-        srcData[i], //Rotwert
-        srcData[i + 1], //Grünwert
-        srcData[i + 2] //Blauwert
-        //channels === 4 ? srcData[i + 3] : 255 //optionaler Alphawert
+        srcData[i],
+        srcData[i + 1],
+        srcData[i + 2]
       );
     }
 
@@ -55,7 +47,6 @@ async function preprocessImage(imageFilePath) {
     new Jimp({ data: Buffer.from(imageData), width, height }, (err, image) => {
       if (err) console.log(err.message);
       image.write(`./preprocessedImages/${receiptName}.png`, (err) => {
-        //image.write(`C:\\Users\\Aylin\\OneDrive\\Desktop\\PreprocessedImages\\${receiptName}.png`, (err) => {
         console.log('Bild gespeichert.');
       });
     });
@@ -64,15 +55,13 @@ async function preprocessImage(imageFilePath) {
     src.delete(); gray.delete(); dilate.delete(); erode.delete(); dst.delete();
 
     return `./preprocessedImages/${receiptName}.png`;
-
-
   } catch (err) {
     //Ressourcen auch bei Fehlern freigeben
     src.delete(); gray.delete(); dilate.delete(); erode.delete(); dst.delete();
-
     console.log(err.message);
   }
 }
+
 
 //Warten, bis die OpenCV-Bibliothek geladen und initialisiert ist,um OpenCV Funktionen benutzen zu können 
 Module = {
@@ -80,7 +69,6 @@ Module = {
     preprocessImage
   }
 }
-
 
 
 module.exports = preprocessImage;

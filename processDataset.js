@@ -5,6 +5,8 @@ const params = require('./tessConfig.js');
 const calculateAccuracyOnWordLevel = require('./measurements/calculateOcrAccuracy.js');
 const { generateCsv, saveOcrAverage, generateCsvWriter } = require('./measurements/generateCSV.js');
 const preprocessImage = require('./preprocessing/imagePreprocessing.js');
+const autoCorrectText = require('./postprocessing/autoCorrect.js');
+const correctSpelling = require('./postprocessing/spellcheck.js');
 
 
 //Funktion mit ChatGPT generiert und angepasst
@@ -28,13 +30,13 @@ async function generateParamCombinations(parameters, index, current) {
 //Funktion, welche zur Auswertung des Datensatzes aufgerufen wurde
 //Ruft in einer Schleife für jedes Bild im Datensatz die Texterkennung mit der aktuellen Tesseract-Parameterkombination auf
 //Genauigkeit der Texterkennung wird jeweils ausgewertet und das Ergebnis in einer CSV-Datei gespeichert
-//const paramCombinations = [];
+const paramCombinations = [];
 async function processDataset() {
   try {
     //generateParamCombinations(Object.keys(params), 0, {});
     const mainDirectory = 'C:\\Users\\Aylin\\OneDrive\\Desktop\\Datensatz';
     const directories = await fs.readdir(mainDirectory);
-    //for (const combination of paramCombinations) {
+    for (const combination of paramCombinations) {
       generateCsvWriter();
       for (const directory of directories) {
         const directoryPath = path.join(mainDirectory, directory);
@@ -42,16 +44,15 @@ async function processDataset() {
         for (const imageFile of imageFiles) {
           const imageFilePath = path.join(directoryPath, imageFile);
           const preprocessedImg = await preprocessImage(imageFilePath);
-          //const ocrText = await recognizeText(imageFilePath, combination);
-          const ocrText = await recognizeText(preprocessedImg);
-          //const finalText = await postprocessText(ocrText);
-          await calculateAccuracyOnWordLevel(ocrText, imageFilePath);
+          const ocrText = await recognizeText(preprocessedImg, combination);
+          const autoCorrectedOcrText = await autoCorrectText(ocrText);
+          const finalText = await correctSpelling(autoCorrectedOcrText);
+          await calculateAccuracyOnWordLevel(finalText, imageFilePath);
         }
         saveOcrAverage();
       }
-      //generateCsv(combination);
-      generateCsv();
-    //}
+      generateCsv(combination);
+    }
   } catch (err) {
     console.log(err.message);
   }

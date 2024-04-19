@@ -7,15 +7,14 @@ const params = require('./tessConfig.js');
 //Hier wird Tesseract für die Texterkennung auf dem hochgeladenen Kassenbon mit den entsprechenden Parametern aufgerufen und in einer 
 //Textdatei gespeichert
 async function recognizeText(imageFilePath) {
-  /*7const worker = await createWorker("deu", params.oem, {
+  const worker = await createWorker("deu", params.oem, {
     load_system_dawg: params.load_system_dawg,
     load_freq_dawg: params.load_freq_dawg,
     logger: m => console.log(m),
     errorHandler: err => console.error(err)
-  });*/
-  const worker = await createWorker("deu");
+  });
 
-  /*await worker.setParameters({
+  await worker.setParameters({
     tessedit_pageseg_mode: params.psm,
     tessedit_char_blacklist: params.blacklist,
     user_defined_dpi: params.dpi,
@@ -33,7 +32,7 @@ async function recognizeText(imageFilePath) {
     textord_interpolating_skew: params.textord_interpolating_skew,
     textord_min_xheight: params.textord_min_xheight,
     enable_noise_removal: params.enable_noise_removal
-  })*/
+  })
 
   const { data: { text } } = await worker.recognize(imageFilePath);
   const splitedPath = imageFilePath.split("/");

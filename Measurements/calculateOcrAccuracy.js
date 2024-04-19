@@ -8,7 +8,7 @@ async function calculateAccuracyOnWordLevel(ocrText, imageFilePath) {
 
     const ocrWords = (normalizeText(ocrText)).split(' ');
     const refWords = (normalizeText(refText)).split(' ');
-  
+
     //Gesamtanzahl der Fehler im OCR-Text wird bestimmt
     const { deletions, substitutions } = countErrors(ocrWords, refWords);
     const errors = deletions + substitutions;

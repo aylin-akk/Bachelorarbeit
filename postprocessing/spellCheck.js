@@ -1,7 +1,6 @@
 const natural = require('natural');
 const { initializeDatabases } = require('../dbInitializer.js');
 
-
 let productsDictionary = {};
 
 async function correctSpelling(ocrText) {
@@ -31,12 +30,13 @@ async function correctSpelling(ocrText) {
         result = result.replace(match[1], correctedName);
       }
     }
+    await productsDb.close();
     return result;
   } catch (error) {
+    await productsDb.close();
     console.log(error);
    }
 }
-
 
 function correctProductNameByLevenshtein(originProductName) {
   let minDistance = Infinity;
@@ -53,7 +53,7 @@ function correctProductNameByLevenshtein(originProductName) {
 
   //Für den Fall, dass der oben gefundene Produktname eine Distanz von höchstens 2 hat, wird dieser korrigierte Produktname
   //zurückgegeben, ansonsten wird der ursprüngliche Produktname im OCR-Text behalten
-  const threshold = 2;
+  const threshold = 3;
   if (minDistance <= threshold) {
     return closestProductName;
   } else {

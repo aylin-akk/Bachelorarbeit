@@ -19,7 +19,7 @@ viewBox="0 0 16 16">
   d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
 </svg>`;
 
-
+//Generiert den HTML-Code für die Kassenbonansicht im Frontend 
 async function extractReceiptData(ocrText) {
 
   const streetMatch = ocrText.match(/\b[A-Za-zäüßöÄÜÖ.-]{6,}[ ]+\d{1,3}-?\d{1,3}?[ ]*[A-Fa-f]?\b/);
@@ -28,11 +28,8 @@ async function extractReceiptData(ocrText) {
   const timeMatch = ocrText.match(/\d{2}:\d{2}/);
   const productsPattern = /([A-ZÄÖÜäöüß].{2,})[ ]+(-?\d{1,3}[,.]\d{2})/g;
 
-
-
   //überprüfen, ob die Ortsangaben im OCR-Text gefunden werden konnten, wenn nicht wird der 
   //Nutzer aufgefordert, die Informationen für die Ortsangabe manuell nachzutragen
-  console.log(locationMatch,streetMatch);
   const aldiSuedLocation = (locationMatch && streetMatch) ? `
   <input name="location" class="location text-center border border-0" type="text" value="${streetMatch[0]}, ${locationMatch[0]}" readonly
   background-color: white;">` :
@@ -42,7 +39,7 @@ async function extractReceiptData(ocrText) {
   <input name="location2" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. 40210 Düsseldorf" style="background-color: #FFD0C5">` :
       (locationMatch) ? `
     <input name="location" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. Universitätsstraße 1" style="background-color: #FFD0C5">,
-    <input name="location2" type="text" class="location text-center border border-0" value="${locationMatch[0]}" readonly background-color: white">` :`
+    <input name="location2" type="text" class="location text-center border border-0" value="${locationMatch[0]}" readonly background-color: white">` : `
   <input name="location" type="text" class="location border border-2 border-danger text-center" placeholder="z.B. Universitätsstraße 1"
   style="background-color: #FFD0C5">, 
   <input name="location2" class="location border border-2 border-danger text-center" type="text" placeholder="z.B. 40210 Düsseldorf" style="background-color: #FFD0C5">`;
@@ -102,7 +99,7 @@ async function extractReceiptData(ocrText) {
     <div class="row"> 
       <div class="col text-center">${aldiSuedLocation}</div>
       <div class="col-3 text-end">
-        <button onclick="saveChanges('location')" type="button" class="btn btn-success btn-sm">
+        <button onclick="saveChanges('location')" type="button" class="btn btn-success btn-sm confirmGroup">
           ${saveButtonIcon}
         </button>
         <button onclick="editRow('location');" type="button" class="btn btn-warning btn-sm">
@@ -119,7 +116,7 @@ async function extractReceiptData(ocrText) {
     <div class="row"> 
       <div class="col text-center">${receiptDate}</div>
       <div class="col-3 text-end">
-        <button onclick="saveChanges('date')" type="button" class="btn btn-success btn-sm">
+        <button onclick="saveChanges('date')" type="button" class="btn btn-success btn-sm confirmGroup">
         ${saveButtonIcon}
         </button>
         <button onclick="editRow('date');" type="button" class="btn btn-warning btn-sm">
@@ -173,7 +170,7 @@ async function extractReceiptData(ocrText) {
       <tr id="row${i}">
       <th scope="row" class="rowNumber">${i}</th>
       <td>
-        <input name="product${i}" id="product${i}" type="text" class="form-control px-1 fs-6 ${( match[1].includes("*") ? "border border-2 border-danger" : "border border-0" )} text" value="${match[1].trim().replace(/\*/g,"")}" readonly
+        <input name="product${i}" id="product${i}" type="text" class="form-control px-1 fs-6 ${(match[1].includes("*") ? "border border-2 border-danger" : "border border-0")} text" value="${match[1].trim().replace(/\*/g, "")}" readonly
           style="background-color: white">
       </td>
       <td>
@@ -254,5 +251,6 @@ async function extractReceiptData(ocrText) {
 
   return { products: productsHTML, infos: string1 };
 }
+
 
 module.exports = extractReceiptData;

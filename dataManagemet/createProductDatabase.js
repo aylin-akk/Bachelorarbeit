@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require("path");
-const {initializeDatabases } = require('../dbInitializer.js');
+const { initializeDatabases } = require('../dbInitializer.js');
 
 
 const groundTruthPath = './groundtruthDataset';
@@ -10,7 +10,7 @@ const productPattern = /^(.+)\s+(-?\d{1,3},\d{2})\s*$/gm;
 //Produktbezeichnungen erstellt, um diese beim Postprocessing für die Korrektur der Artikelnamen zu benutzen
 async function createProductDatabase() {
   try {
-    const {productsDb} = await initializeDatabases();
+    const { productsDb } = await initializeDatabases();
     await productsDb.exec('CREATE TABLE IF NOT EXISTS products (name TEXT UNIQUE, frequency INTEGER)');
     const files = await fs.readdir(groundTruthPath);
     for (const file of files) {

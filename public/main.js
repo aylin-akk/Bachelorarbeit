@@ -1,13 +1,13 @@
-function prepareViewForUpload(){
+function prepareViewForUpload() {
   document.getElementById("einkaufsdetails").click()
   document.getElementById("savingSuccessArea").innerHTML = '';
   document.getElementById('loadingSpinner').style.display = 'block';
-  document.getElementById('receiptInfos').innerHTML='';
-  document.getElementById('productsTable').innerHTML='';
-
+  document.getElementById('receiptInfos').innerHTML = '';
+  document.getElementById('productsTable').innerHTML = '';
 }
 
-function confirmAllFields(){
+// Funktion um alle vom User zu überprüfenden Felder zu bestätigen
+function confirmAllFields() {
   for (button of document.getElementsByClassName("confirmGroup")) {
     button.click();
   }
@@ -16,53 +16,55 @@ function confirmAllFields(){
 
 //Logik fürs Frontend beim Speichern von geänderten Input-Feldern
 function saveChanges(inputID) {
-  if(inputID == "location"){
-    for(e of document.getElementsByClassName('location')){
+  if (inputID == "location") {
+    for (e of document.getElementsByClassName('location')) {
       e.readOnly = true;
       e.style.border = 'none';
-      e.classList.remove("border-2","border-danger","border-warning");
+      e.classList.remove("border-2", "border-danger", "border-warning");
       e.classList.add("border-0")
       e.style.backgroundColor = 'white';
     }
-  }else{
+  } else {
     document.getElementById(inputID).readOnly = true;
     document.getElementById(inputID).style.border = 'none';
-    document.getElementById(inputID).classList.remove("border-2","border-danger","border-warning");
+    document.getElementById(inputID).classList.remove("border-2", "border-danger", "border-warning");
     document.getElementById(inputID).classList.add("border-0")
     document.getElementById(inputID).style.backgroundColor = 'white';
   }
 }
 
+// Funktion um die Summe bei Änderungen der Inhalte zu berechnen
 function updateReceiptSum(productPriceList) {
-  let sum= 0;
- const priceList = document.getElementsByClassName(productPriceList);
- for (let index = 0; index < priceList.length; index++) {
- 
-  let cent = convertEurotoCent(priceList[index].value);
-  sum += cent/100;
+  let sum = 0;
+  const priceList = document.getElementsByClassName(productPriceList);
+  for (let index = 0; index < priceList.length; index++) {
+
+    let cent = convertEurotoCent(priceList[index].value);
+    sum += cent / 100;
   }
   const updatedSum = sum.toFixed(2);
-  
-  document.getElementById('receiptSum').value = updatedSum;
 
+  document.getElementById('receiptSum').value = updatedSum;
 }
 
-function convertEurotoCent(euroValue){
+
+function convertEurotoCent(euroValue) {
   euroValue = euroValue.replace(',', '.');
   let valueInFloat = parseFloat(euroValue);
-  let cent =  Math.round(valueInFloat * 100);
+  let cent = Math.round(valueInFloat * 100);
   return cent;
 }
 
+//Funktion ermöglicht dem User die Inputfelder zu bearbeiten und visualisiert diese farbig
 function editRow(inputID) {
-  if(inputID == "location"){
-    for(e of document.getElementsByClassName('location')){
+  if (inputID == "location") {
+    for (e of document.getElementsByClassName('location')) {
       e.readOnly = false;
       e.classList.remove("border-0");
       e.classList.add("border-2");
       e.classList.add("border-warning");
     }
-  }else{
+  } else {
     document.getElementById(inputID).readOnly = false;
     document.getElementById(inputID).classList.remove("border-0");
     document.getElementById(inputID).classList.add("border-2")
@@ -71,11 +73,12 @@ function editRow(inputID) {
 }
 
 
+//Funktion zum Löschen eines Produktes aus dem eingelesenen Kassenbon
 function deleteProductRow(rowID) {
   document.getElementById(rowID).remove();
 }
 
-
+//Funktion um die Zeilennummer bei Veränderungen anzupassen
 function updateRowNumbers() {
   let i = 1;
   for (e of document.getElementsByClassName("rowNumber")) {
@@ -84,24 +87,25 @@ function updateRowNumbers() {
   }
 }
 
+// Funktion, die es ermöglicht, eine neue Zeile für einen neuen Eintrag zu erstellen
 function addEmptyProductRow() {
   let tbody = document.getElementById("productList");
   let i = tbody.rows.length;
-  let newRow = tbody.insertRow(tbody.rows.length-1);
-  newRow.id=  `row${i}`;
+  let newRow = tbody.insertRow(tbody.rows.length - 1);
+  newRow.id = `row${i}`;
   let rowNr = newRow.insertCell(0);
   let productName = newRow.insertCell(1);
   let price = newRow.insertCell(2);
   let buttons = newRow.insertCell(3);
 
-    rowNr.innerHTML = `<th scope="row" class="rowNumber">${i}</th>`;
-    productName.innerHTML = `<td>
+  rowNr.innerHTML = `<th scope="row" class="rowNumber">${i}</th>`;
+  productName.innerHTML = `<td>
     <input id="product${i}" type="text" class="fs-6 text" value="" placeholder="z.B. Käse" style="border:0; background-color: white">
     </td>`;
-    price.innerHTML = `<td>
+  price.innerHTML = `<td>
     <input id="price${i}" type="number" class="pricesForSum fs-6 text" value="" placeholder="z.B. 3,99" style="border:0; background-color: white">
     </td>`;
-    buttons.innerHTML = `<td>
+  buttons.innerHTML = `<td>
     <button onclick="document.getElementById('product${i}').readOnly = true; document.getElementById('price${i}').readOnly = true; document.getElementById('product${i}').style.border = 'none'; document.getElementById('price${i}').style.border = 'none'; updateReceiptSum('pricesForSum');" type="button" class="btn btn-success btn-sm">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-floppy" viewBox="0 0 16 16">
       <path d="M11 2H9v3h2z"/>
@@ -122,8 +126,9 @@ function addEmptyProductRow() {
   </td>`;
 }
 
-const formReceiptUpload = document.getElementById('uploadForm');
 
+const formReceiptUpload = document.getElementById('uploadForm');
+//Funktion um Kassenbon auf Server zu laden
 formReceiptUpload.addEventListener('submit', async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
@@ -132,25 +137,27 @@ formReceiptUpload.addEventListener('submit', async (event) => {
     body: formData
   });
   const uploadResult = await response.json();
-
   document.getElementById('errorMessage').innerHTML = uploadResult.message;
-  document.getElementById('receiptInfos').innerHTML = uploadResult.resultInfos;
-  document.getElementById('productsTable').innerHTML = uploadResult.resultProducts;
+  if(uploadResult.message != "Keine Datei hochgeladen"){
+    document.getElementById('receiptInfos').innerHTML = uploadResult.resultInfos;
+    document.getElementById('productsTable').innerHTML = uploadResult.resultProducts;
+  }
+
   document.getElementById('loadingSpinner').style.display = "none";
-  
-  if(document.getElementById("receiptSum").value == ""){
+
+  if (document.getElementById("receiptSum").value == "") {
     for (price of document.getElementsByClassName("pricesForSum")) {
       price.classList.remove("border-0");
       price.classList.add("border-1");
       price.classList.add("border-danger");
-      price.style.backgroundColor= "#FFD0C5"
+      price.style.backgroundColor = "#FFD0C5"
     }
     updateReceiptSum('pricesForSum');
-  }else{
+  } else {
     let recognizedSum = document.getElementById("receiptSum").value;
     updateReceiptSum('pricesForSum');
 
-    if(recognizedSum != document.getElementById("receiptSum").value){
+    if (recognizedSum != document.getElementById("receiptSum").value) {
       for (price of document.getElementsByClassName("pricesForSum")) {
         price.classList.remove("border-0");
         price.classList.add("border-1");
@@ -163,30 +170,30 @@ formReceiptUpload.addEventListener('submit', async (event) => {
 
 
 const formReceiptSave = document.getElementById('receiptForm');
-
-formReceiptSave.addEventListener('submit', async (event) => { 
+//Funktion zum Speichern des Kassenbons nach dem Hochladen und Prüfen vom User
+formReceiptSave.addEventListener('submit', async (event) => {
   event.preventDefault();
-  
-  if(document.getElementById("date").value == "" ||document.getElementsByClassName("border-danger").length > 0 ||  document.getElementsByClassName("border-warning").length > 0){
+  //Verhindert das speichern vom Kassenbon bei rot bzw. gelb markierten Feldern
+  if (document.getElementById("date").value == "" || document.getElementsByClassName("border-danger").length > 0 || document.getElementsByClassName("border-warning").length > 0) {
 
     document.getElementById("warnArea").style.display = "block";
-    document.getElementById("warnText").innerHTML = `${(document.getElementsByClassName("border-danger").length > 0 ||  document.getElementsByClassName("border-warning").length > 0)?"Bitte alle rot oder gelb markierten Felder überprüfen! <br>Durch Klicken auf Bearbeiten und Speichern kann der Kassenbon gespeichert werden. <br>":""} ${(document.getElementById("date").value == "")?"Bitte Datum eingeben!":""}`;
+    document.getElementById("warnText").innerHTML = `${(document.getElementsByClassName("border-danger").length > 0 || document.getElementsByClassName("border-warning").length > 0) ? "Bitte alle rot oder gelb markierten Felder überprüfen! <br>Durch Klicken auf Bearbeiten und Speichern kann der Kassenbon gespeichert werden. <br>" : ""} ${(document.getElementById("date").value == "") ? "Bitte Datum eingeben!" : ""}`;
     window.scrollBy(0, 100);
 
-  }else{
+  } else {
     document.getElementById("warnArea").style.display = "none";
     document.getElementById("warnText").innerHTML = "";
 
-    const formData = new FormData(event.target); 
+    const formData = new FormData(event.target);
     const response = await fetch('/saveReceiptToDatabase', {
       method: 'POST',
       body: formData
     });
     const result = await response.json();
 
-    if(result.result == "saved"){
-      document.getElementById('receiptInfos').innerHTML='';
-      document.getElementById('productsTable').innerHTML='';
+    if (result.result == "saved") {
+      document.getElementById('receiptInfos').innerHTML = '';
+      document.getElementById('productsTable').innerHTML = '';
 
       document.getElementById("savingSuccessArea").innerHTML = `
       <div class="text-center mt-4">
@@ -203,6 +210,7 @@ formReceiptSave.addEventListener('submit', async (event) => {
   }
 });
 
+//Funktion zum Löschen von Kassenbons aus der DB über den Server
 async function deleteReceipt(receiptId) {
 
   const formData = new FormData();
@@ -220,14 +228,11 @@ async function deleteReceipt(receiptId) {
 
     const result = await response.json();
 
-    if(result.result == "deleted"){
+    if (result.result == "deleted") {
       getAllReceipts();
       changeContent('meineKassenbonsView');
     }
-
   } catch (error) {
     console.error('Error:', error);
   }
-
-
 }

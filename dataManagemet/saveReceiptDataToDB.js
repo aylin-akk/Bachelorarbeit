@@ -35,7 +35,7 @@ async function saveReceiptData(receiptData) {
     });
 
     //Zum Abfangen des Fehlers, welcher durch das Löschen von Produkt-Preis-Zeilen entsteht. (key von Object productPriceObj nicht immer um 1 inkrementiert [`product${i}`])
-    let limit = parseInt(Object.keys(productPriceObj)[Object.keys(productPriceObj).length-1].replace("price",""));
+    let limit = parseInt(Object.keys(productPriceObj)[Object.keys(productPriceObj).length - 1].replace("price", ""));
 
 
     //Jeder gekaufte Artikel wird zusammen mit dem Preis und der letzten KassenbonID in die Datenbank gespeichert 
